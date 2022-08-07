@@ -64,6 +64,7 @@ class ProductController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
         $entityManager = $this->getDoctrine()->getManager();
+        $product->setCreatedAt(new \Datetime());
         $entityManager->persist($product);
         $entityManager->flush();
 
@@ -78,15 +79,13 @@ class ProductController extends AbstractController
 
 
 
-
-
     /**
-     * @Route("/updateProduct/product/ ", name="updateProduct")
+     * @Route("/{id}/editar", name="editarProductos")
      */
 
-    public function updateProduct(){
+    public function editarProductos($id){
 
-        $Product = $this->em->getRepository(Product::class)->find(7);
+        $Product = $this->em->getRepository(Product::class)->find($id);
 
         if (!$Product) {
             throw $this->createNotFoundException(
@@ -94,16 +93,16 @@ class ProductController extends AbstractController
             );
         }
 
-        $Product->SetName('My new update');
-        $Product->setActive('1');
-        $Product->setupdateAt(new \Datetime());
+        //$Product->SetName('My new update');
+        //$Product->setActive('1');
+        //$Product->setupdateAt(new \Datetime());
 
         $this->em->persist($Product);
         $this->em->flush();
 
-        $response = new JsonResponse(['success' => true]);
-        return $response;
+        return $this->render('product/editar.html.twig');
     }
+
 
 
     /**
@@ -111,9 +110,9 @@ class ProductController extends AbstractController
      */
 
 
-    public function removeProduct(){
+    public function removeProduct($id){
 
-        $Product = $this->em->getRepository(Product::class)->find(2);
+        $Product = $this->em->getRepository(Product::class)->find($id);
 
         if (!$Product) {
             throw $this->createNotFoundException(
@@ -124,9 +123,9 @@ class ProductController extends AbstractController
         $this->em->remove($Product);
         $this->em->flush();
 
-        $response = new JsonResponse(['success' => true]);
-        return $response;
+        return $this->render('product/eliminado.html.twig');
     }
+
 
 
 }

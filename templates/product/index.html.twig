@@ -54,7 +54,7 @@
             <td> {{Products.category}} </td>
             <td> {{Products.price}} </td>
             <td>
-                <a href="{{ path('removeProduct', {'id': Products.id}) }}" class="btn btn-warning"><span class="glyphicon glyphicon-pencil"></span> Editar</a>
+                <a href="{{ path('editarProductos', {'id': Products.id}) }}" class="btn btn-warning"><span class="glyphicon glyphicon-pencil"></span> Editar</a>
                 <a href="{{ path('removeProduct', {'id': Products.id}) }}" class="btn btn-info"><span class="glyphicon glyphicon-eye-open"></span> Borrar</a>
             </td>
         </tr>
