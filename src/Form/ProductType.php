@@ -22,8 +22,10 @@ class ProductType extends AbstractType
             ->add('description',TextareaType::class, array('label'=>'Descripción', 'required'=>'required', 'attr'=>array('class'=>'form-control')))
             ->add('brand', TextType::class, array('label'=>'Marca', 'required'=>'required', 'attr'=>array('class'=>'form-control')))
             ->add('price', MoneyType::class, array('label'=>'Precio', 'required'=>'required', 'attr'=>array('class'=>'form-control')))
-            ->add('Category', TextType::class,  array('label'=>'Category', 'required'=>'required', 'attr'=>array('class'=>'form-control')))
+            ->add('Category', ChoiceType::class, ['choices'=>['Select...'=>'0', 'Tecnologia'=>'1', 'Ropa'=>'2','Zapatos'=>'3'],'label'=>'Categoria', 'attr'=>array('class'=>'form-control')])
             ->add('submit', SubmitType::class, array('label'=>'submit',  'attr'=>array('class'=>'btn btn-primary')))
+
+
         ;
     }
 

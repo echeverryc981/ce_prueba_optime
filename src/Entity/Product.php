@@ -54,7 +54,7 @@ class Product
 
 
      /**
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="Product")
      */
 

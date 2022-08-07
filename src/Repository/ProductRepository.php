@@ -43,12 +43,19 @@ class ProductRepository extends ServiceEntityRepository
     public  function findAllProduct(){
         return $this->getEntityManager()
             ->createQuery('
-                SELECT Product
-                FROM App:Product Product
-                ORDER BY Product.id DESC
-            ')
-            ->getResult();
+                SELECT Product.id, Product.code, Product.name, Product.description, Product.brand, Product.price,
+                CASE WHEN Product.category=1 THEN \'TECNOLOGIA\'
+                     WHEN Product.category=2 THEN \'ROPA\'
+                     WHEN Product.category=3 THEN \'ZAPATOS\'
+                    else \'SIN CATEGORIA\' END AS category
+                FROM App:Product as Product
+                ORDER BY Product.id ASC
+            ');
+
+
     }
+
+
 
 //    /**
 //     * @return Product[] Returns an array of Product objects

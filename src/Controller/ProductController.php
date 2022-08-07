@@ -6,11 +6,15 @@ use App\Entity\Product;
 use App\Form\ProductType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+require '../vendor/autoload.php';
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ProductController extends AbstractController
 {   private $em;
@@ -28,10 +32,17 @@ class ProductController extends AbstractController
     /**
      * @Route("/ ", name="app_product")
      */
-    public function index(Request $request): Response
+    public function index(Request $request, PaginatorInterface $paginator): Response
     {
         $Product = new Product();
-        $Products = $this->em->getRepository(Product::class)->findAll();
+        $Products = $this->em->getRepository(Product::class)->findAllProduct();
+
+        $pagination = $paginator->paginate(
+            $Products, /* query NOT result */
+            $request->query->getInt('page', 1), /*page number*/
+            2 /*limit per page*/
+        );
+
 
         $form = $this->createForm(ProductType::class, $Product);
         $form->handleRequest($request);
@@ -47,7 +58,7 @@ class ProductController extends AbstractController
 
         return $this->render('product/index.html.twig', [
             'form' => $form->createView(),
-            'Products' => $Products
+            'Products' => $pagination
         ]);
     }
 
@@ -83,24 +94,33 @@ class ProductController extends AbstractController
      * @Route("/{id}/editar", name="editarProductos")
      */
 
-    public function editarProductos($id){
+    public function editarProductos($id,Request $request){
 
-        $Product = $this->em->getRepository(Product::class)->find($id);
+        $Product = new Product();
+        $Products = $this->em->getRepository(Product::class)->find($id);
 
-        if (!$Product) {
+        $form = $this->createForm(ProductType::class, $Products);
+        $form->handleRequest($request);
+
+        if (!$form) {
             throw $this->createNotFoundException(
                 'No product found for id '
             );
         }
 
-        //$Product->SetName('My new update');
-        //$Product->setActive('1');
-        //$Product->setupdateAt(new \Datetime());
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+        $Product->SetName('My newwww update');
+        $Product->setCode('1');
+        $Product->setupdateAt(new \Datetime());
+            $entityManager->flush();
+            return $this->redirectToRoute('app_product');
+        }
 
-        $this->em->persist($Product);
-        $this->em->flush();
 
-        return $this->render('product/editar.html.twig');
+
+        return $this->render('product/editar.html.twig',['Product' => $Products]);
+
     }
 
 
@@ -124,6 +144,22 @@ class ProductController extends AbstractController
         $this->em->flush();
 
         return $this->render('product/eliminado.html.twig');
+    }
+
+    /**
+     * @Route("/", name="descargarxls")
+     */
+
+    public function DescargarExcel(){
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setCellValue('A1', 'Hello World !');
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('hello world.xlsx');
+
     }
 
 
